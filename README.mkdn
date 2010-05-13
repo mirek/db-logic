@@ -1,8 +1,8 @@
-h1. db:logic
+# db:logic
 
 Ruby on Rails database logic support.
 
-h2. Usage
+# Usage
 
     rails plugin install git://github.com/mirek/rails-db-logic.git
 
@@ -22,16 +22,16 @@ With capistrano:
 
     cap deploy deploy:db:logic
 
-h2. FAQ
+## FAQ
 
-h3. There are no migrations for db:logic?
+### There are no migrations for db:logic?
 
 No. Think of database logic as database seeds. It's invoked only once at the top all current migrations.
 You guarantee successful run only for the most up to date db schema (just like seeds).
 
-h2. Examples
+## Examples
 
-h3. Functions
+### Functions
 
 Example mysql function `db/logic/function.country_name_by_ip_address.sql` using geoip table:
 
@@ -62,9 +62,9 @@ Example mysql function `db/logic/function.country_name_by_ip_address.sql` using 
 
     delimiter ;
 
-h3. Procedures
+### Procedures
 
-h3. Triggers
+### Triggers
 
 Example mysql `trigger.users.create_user_login_event.sql` trigger creating new events after user login (after `User#last_login_at` update):
 
@@ -98,8 +98,10 @@ Example mysql `trigger.users.create_user_login_event.sql` trigger creating new e
 
     delimiter ;
 
-h3. Events
+### Events
 
-h3. Views
+### Views
+
+## Copyright
 
 Copyright (c) 2010 Mirek Rusin, released under the MIT license
