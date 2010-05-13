@@ -1,0 +1,105 @@
+h1. db:logic
+
+Ruby on Rails database logic support.
+
+h2. Usage
+
+    rails plugin install git://github.com/mirek/rails-db-logic.git
+
+Create new files for functions, procedures, triggers, events, views etc in `#{Rails.root}/db/logic`:
+
+    event.foo.sql
+    view.foo.sql
+    trigger.table.foo.sql
+    function.foo.sql
+    procedure.foo.sql
+
+Update database logic with:
+
+    rake db:logic:update
+    
+With capistrano:
+
+    cap deploy deploy:db:logic
+
+h2. FAQ
+
+h3. There are no migrations for db:logic?
+
+No. Think of database logic as database seeds. It's invoked only once at the top all current migrations.
+You guarantee successful run only for the most up to date db schema (just like seeds).
+
+h2. Examples
+
+h3. Functions
+
+Example mysql function `db/logic/function.country_name_by_ip_address.sql` using geoip table:
+
+    delimiter $$
+
+    drop function if exists `country_name_by_ip_address`$$
+
+    create function `country_name_by_ip_address`(ip_address char(15))
+      returns varchar(255)
+      deterministic
+      reads sql data 
+      comment 'Country name by ip address (as string)'
+    begin
+      declare r varchar(255) default null;
+      select
+        name
+      from
+        geo_countries
+      where
+        inet_aton(ip_address) >= from_ip_number and
+        inet_aton(ip_address) <= to_ip_number
+      limit
+        1
+      into
+    	  r;
+      return r;
+    end$$
+
+    delimiter ;
+
+h3. Procedures
+
+h3. Triggers
+
+Example mysql `trigger.users.create_user_login_event.sql` trigger creating new events after user login (after `User#last_login_at` update):
+
+    delimiter $$
+
+    drop trigger /*!50032 if exists */ `users_create_user_login_event`$$
+
+    create trigger `users_create_user_login_event` after update on `users`
+    for each row begin
+      declare r bool;
+      if (old.last_login_at <> new.last_login_at) then
+        select
+          create_event(
+            'USER_LOGIN',
+            'User',
+            new.id,
+            null,
+            null,
+            concat(
+              new.username,
+              ' just logged in from ',
+              ifnull(
+                country_name_by_ip_address(new.last_login_ip_address),
+                ' unknown place on earth'
+              )
+            ),
+          null
+        ) into r;
+      end if;
+    end$$
+
+    delimiter ;
+
+h3. Events
+
+h3. Views
+
+Copyright (c) 2010 Mirek Rusin, released under the MIT license
