@@ -4,9 +4,9 @@ Ruby on Rails database logic support.
 
 # Usage
 
-    rails plugin install git://github.com/mirek/rails-db-logic.git
+    rails plugin install git://github.com/mirek/db-logic.git
 
-Create new files for functions, procedures, triggers, events, views etc in `#{Rails.root}/db/logic`:
+In `#{Rails.root}/db/logic` add new files for your functions, procedures, triggers, events, views etc:
 
     event.foo.sql
     view.foo.sql
